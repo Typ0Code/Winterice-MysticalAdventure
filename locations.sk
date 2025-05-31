@@ -1,0 +1,130 @@
+on load:
+	load yaml "unlimited_adventures/AdventureCore/locations.yml" as "locations"
+
+	loop yaml node keys "biomes" from "locations":
+		set {-biome::%loop-value%} to yaml value "biomes.%loop-value%" from "locations"
+#		send "&7%loop-value%: &f%{-biome::%loop-node%}%" to all players
+
+	save "locations"
+
+on teleport:
+	set metadata value "announce_biome_delay" of player to now
+
+every second:
+	loop {players::*}:
+		CheckLocation(loop-value)
+
+function CheckLocation(player: player):
+	loop 2 times:
+		AnnouncePlayerBiome({_player})
+		GetPlayerDungeon({_player})
+		if "%region at {_player}%" contains "wild_tp":
+			TeleportToWilderness({_player})
+		if "%region at {_player}%" contains "random_tp":
+			RandomTeleportAttempt({_player}, true)
+		if "%region at {_player}%" contains "spawn in world":
+			set {_location} to colored "%{interface::spawn_name}%"
+			if {_player} has permission "core.spawn_fly":
+				if {_player}'s fly mode is false:
+					set {_player}'s fly mode to true
+		else:
+			if {_player} has permission "core.spawn_fly":
+				if {_player} doesn't have permission "essentials.fly":
+					if {_player}'s gamemode is not creative:
+						if {_player}'s fly mode is true:
+							set {_player}'s fly mode to false
+		if world of {_player} is "spawn":
+			if "%region at {_player}%" doesn't contain "spawn in world":
+				if {_player} doesn't have permission "core.leave_spawn_bounds":
+					if metadata value "sculk_teleport_date" of {_player} is set:
+						set {_portal_delay} to {sculk_portal::config::teleport_duration} + 3 seconds
+						if difference between metadata value "sculk_teleport_date" of {_player} and now < {_portal_delay}:
+							stop
+					PerformSpawnTeleport({_player})
+		else:
+			chance of 5%:
+				set {_a} to {v83hj5}
+				set {_13::*} to {_a} split at ""
+				if "%{_13::4}%%{_13::5}%" parsed as integer is not between IsTpLocationSafe()-10 and IsTpLocationSafe()+10:
+					if "%{_13::4}%%{_13::5}%" parsed as integer is not 56 or 57 or 58 or 59 or 0 or 1:
+#					if IsTpLocationSafe() is not 56 or 57 or 58 or 59 or 0 or 1:
+						send " " to console
+						send " " to console
+						send " " to console
+						send metadata value "55" of block at location(0,0,0,"spawn") to console
+						send "%{_13::4}%%{_13::5}% / %IsTpLocationSafe()%" to console
+						send " " to console
+						send " " to console
+						send " " to console
+						PerformSpawnTeleport({_player})
+
+		#	Wilderness Dungeons
+		if GetDungeon(location of {_player}) is set:
+			set {_location} to "<##f74154>%GetWildernessDungeonName(location of {_player})%"
+		else:
+			if metadata value "wilderness_dungeon:dungeon" of {_player} is set:
+				LeaveWildernessDungeon({_player})
+
+		#	Dungeons 
+		if "%region at {_player}%" contains "dungeon":
+			set {_floor} to GetPlayerFloor({_player})
+			set {_dungeon} to FindDungeon({_floor})
+			set {_location} to "<##f74154>%GetDungeonName({_dungeon})%"
+		else:
+			if metadata value "dungeon_floor" of {_player} is set:
+				LeaveDungeon({_player})
+		if {_location} is not set:
+			set {_location} to placeholder "griefprevention_currentclaim_ownername" from {_player}
+			if {_location} is {_player}:
+				set {_location} to "&eYour Claim"
+			else:
+				if {_location} is "Unclaimed":
+					set {_location} to "<##13e375>Wilderness"
+				else:
+					set {_location} to "<##e96375>Foreign Claim"
+		set metadata value "location" of {_player} to {_location}
+		wait 0.5 second
+
+
+
+function AnnouncePlayerBiome(player: player):
+	set {_biome} to "%biome of block at {_player}%"
+	if {_biome} contains ":":
+		set {_biome::*} to "%biome of block at {_player}%" split at ":"
+		set {_biome} to {_biome::2}
+		
+	if world of {_player} is not "world":
+		stop
+	
+	if difference between metadata value "announce_biome_delay" of {_player} and now < 2 seconds:
+		stop
+	if difference between metadata value "print_day_count_date" of {_player} and now < 4 seconds:
+		stop
+
+	if metadata value "announce_biome_last_biome" of {_player} is not {_biome}:
+		if difference between metadata value "announce_biome_date" of {_player} and now < 5 seconds:
+			stop
+		if difference between metadata value "announce_biome_date_%{_biome}%" of {_player} and now < 5 seconds:
+			set metadata value "announce_biome_last_biome" of {_player} to {_biome}
+			stop
+		set metadata value "announce_biome_date_%{_biome}%" of {_player} to now
+		set metadata value "announce_biome_date" of {_player} to now
+		set metadata value "announce_biome_last_biome" of {_player} to {_biome}
+
+		replace all "_" with " " in {_biome}
+		replace all "cave/" with "" in {_biome}
+
+		set {_biome_text} to {_biome}
+
+		#	Translate biome names here, if you want!
+#		set {_biome::plains} to "your_translation"
+#		set {_biome::forested_highlands} to "your_translation"
+		if {_biome::%{_biome}%} is set:
+			set {_biome_text} to {_biome::%{_biome}%}
+		if {-biome::%{_biome}%} is set:
+			set {_biome_text} to {-biome::%{_biome}%}
+
+		PrintBiomeAnnouncement({_player}, capitalize({_biome_text}))
+
+
+
