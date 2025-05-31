@@ -1,0 +1,139 @@
+import:
+	com.endernerds.keyAuth.AuthCommand
+
+on load:
+	if difference between metadata value "last_reload" of block at location(0,0,0, world "spawn") and now < 10 seconds:
+		stop
+	set metadata value "last_reload" of block at location(0,0,0, world "spawn") to now
+	if metadata value "boot_up" of block at location(0,0,0, world "spawn") is not set:
+		set metadata value "boot_up" of block at location(0,0,0, world "spawn") to true
+		AuthorizeLicense()
+		stop
+	AuthorizeLicense()
+
+every 5 seconds:
+	if metadata value "authorization:connection_error" of block at location(0,0,0, world "spawn") is true:
+		if difference between metadata value "authorization:connection_error:date" of block at location(0,0,0, world "spawn") and now >= 15 seconds:
+			AuthorizeLicense()
+every 2 minutes:
+	AuthorizeLicense()
+
+#	Processing...
+function AuthorizeLicense():
+	if difference between metadata value "authorization:delay" of block at location(0,0,0, world "spawn") and now <= 3 seconds:
+		stop
+	set metadata value "authorization:delay" of block at location(0,0,0, world "spawn") to now
+	set metadata value "authorization:completed" of block at location(0,0,0, world "spawn") to false
+	VariableSave()
+
+	loop 12 times:
+		if AuthCommand.handleAuthCode({server::license_code}) contains ":":
+			set {_code} to AuthCommand.handleAuthCode({server::license_code})
+			set metadata value "authorization:completed" of block at location(0,0,0, world "spawn") to true
+			exit loop
+		wait 0.5 second
+
+	delete {server::license_authorized}
+
+#	set {%{zy9fg7h457}%} to AuthCommand.handleAuthCodeAsync({server::license_code})
+	set {%{zy9fg7h457}%} to {_code}
+
+	CheckTps()
+#	send "Returned: %AuthCommand.handleAuthCodeAsync({server::license_code})%" to all players
+#	send "Returned: %{_code}%" to all players
+	delete metadata value "authorization:connection_error" of block at location(0,0,0, world "spawn")
+#	if AuthCommand.handleAuthCodeAsync({server::license_code}) is "connection_error":
+	if {_code} is "connection_error":
+		set metadata value "authorization:connection_error" of block at location(0,0,0, world "spawn") to true
+		set metadata value "authorization:connection_error:date" of block at location(0,0,0, world "spawn") to now
+		set {server::license_authorized} to false
+
+	
+	set {_x11} to {v83hj5}
+	set {_x12::*} to {_x11} split at ""
+#	if AuthCommand.handleAuthCodeAsync({server::license_code}) contains ":":
+	if {_code} contains ":":
+#	if "%{_x12::11}%%{_x12::12}%" parsed as integer is correctBinary():
+		set {server::license_authorized} to true
+		delete metadata value "authorization:processing_date" of block at location(0,0,0, world "spawn")
+		stop
+
+#	if {_code} is "Processing...":
+#		if difference between metadata value "authorization:processing_date" of block at location(0,0,0, world "spawn") and now < 5 seconds:
+#			set {server::license_authorized} to true
+#		if metadata value "authorization:processing_date" of block at location(0,0,0, world "spawn") is not set:
+#			set {server::license_authorized} to true
+#			set metadata value "authorization:processing_date" of block at location(0,0,0, world "spawn") to now
+
+	set {server::license_authorized} to false
+
+function LicenseAuthorized() :: boolean:
+	if {server::license_authorized} is true:
+		return true
+	return false
+
+function AuthorizationServerOnline() :: boolean:
+	if metadata value "authorization:connection_error" of block at location(0,0,0, world "spawn") is true:
+		return false
+	return true
+
+
+
+function SaveLicenseCode(code: string):
+	set {server::license_code} to {_code}
+	set {9f43u88} to {_code}
+
+function bcc() :: integer:
+	set {_b} to unixNow() formatted as "dd" parsed as integer
+	set {_b} to {_b}*3
+	return {_b}
+
+function InputLicenseCodeOnChat(player: player):
+	AuthCommand.resetToken()
+	set metadata value "stop_chat" of {_player} to now
+	set metadata value "insert_license_code" of {_player} to now
+	close inventory of {_player}
+	send " " to {_player}
+	send "✎ &ePlease input your license code on chat:" to {_player}
+	send action bar "Input your license code" to {_player}
+	wait 14.5 seconds
+	if metadata value "insert_license_code" of {_player} is set:
+		send "⏳ &cYou didn't input the code on time. Please try again later." to {_player}
+
+
+on chat:
+	if difference between metadata value "insert_license_code" of player and now < 15 second:
+		delete metadata value "insert_license_code" of player
+		cancel event
+		SaveLicenseCode(message)
+		AuthorizeLicense()
+		loop 50 times:
+			wait 0.2 second
+			if {server::license_authorized} is true:
+				exit loop
+		set {_result} to LicenseAuthorized()
+		if {_result} is true:
+			send " " to player
+			set {_txt} to metadata value "3" of block at location(0,0,0,"spawn")
+			send title "" with subtitle {_txt} to player for 2 seconds
+			send {_txt} to player
+			send " " to player
+			play sound "custom.ui.%{idt1}%" with volume 0.7 and pitch 1 to player
+		if {_result} is false:
+			send " " to player
+			set {_txt} to metadata value "4" of block at location(0,0,0,"spawn")
+			send title "" with subtitle {_txt} to player for 2 seconds
+			send {_txt} to player
+			send " " to player
+			play sound "custom.ui.%{dtf2}%" with volume 0.7 and pitch 1 to player
+
+command /refreshauthorization:
+	permission: admin
+	trigger:
+		set {server::license_code} to "refresh"
+
+on load:
+	wait 3 seconds
+	loop {-list::*}:
+		if script loop-value is not loaded:
+			stop the server
