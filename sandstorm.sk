@@ -1,0 +1,47 @@
+on load:
+	wait 5 seconds
+	load yaml "unlimited_adventures/Ambients/sounds.yml" as "sounds"
+	if yaml value "sandstorm_wind" from "sounds" is not set:
+		set yaml value "sandstorm_wind.sound" from "sounds" to "ambient.medium_wind.desert"
+		set yaml list "sandstorm_wind.biomes" from "sounds" to "arid biomes" and "!savanna" and "!savanna_plateau" and "!windswept_savanna"
+		set yaml list "sandstorm_wind.levels" from "sounds" to "surface" and "sky"
+		set yaml list "sandstorm_wind.weather" from "sounds" to "rain" and "thunder"
+		set yaml value "sandstorm_wind.delay" from "sounds" to 15.5
+		set yaml value "sandstorm_wind.amplitude" from "sounds" to 5
+		set yaml value "sandstorm_wind.volume" from "sounds" to 1
+		set yaml value "sandstorm_wind.pitch" from "sounds" to 0.5
+
+	save yaml "sounds"
+
+
+
+
+
+
+
+
+every 5 seconds:
+	loop {players::*}:
+		SandstormCheck(loop-value)
+
+
+function SandstormCheck(player: player):
+	loop 10 times:
+		if weather in "world" is rain or thunder:
+			if {ambients::biomes::arid::*} contains "%{_player}'s biome%":
+				if "%{_player}'s biome%" doesn't contain "savanna":
+					loop 2 times:
+						draw 100 falling dust using sand at location 3 meters above {_player} with offset vector(3, 2, 3)
+						wait 0.25 second
+				else:
+					wait 0.5 second
+			else:
+				wait 0.5 second
+		else:
+			wait 0.5 second
+
+
+
+
+
+
