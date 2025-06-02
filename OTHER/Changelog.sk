@@ -1,0 +1,52 @@
+command /changelog:
+	trigger:
+		send ""
+		send "                      &8&lCHANGELOG                      "
+		send ""
+		wait 1 second
+		send ""
+		send ""
+		send "&7&l                      &001.06.                      "
+		send "&a+ &2&lWilderness Dungeons"
+		send "&a+ &2Dashboard​"
+		send "&a+ &2Realistic Sprint"
+		send ""
+		wait 2 seconds
+		send "&a+ &2Made /nightvision command cool"
+		send "&a+ &2/mute command"
+		send "&a+ &2Imrpoved home System"
+		send ""
+		wait 2 seconds
+		send "&b~ &3Balanced the Spider Queen boss fight difficulty"
+		send "&b~ &3Improved Wilderness Dungeons first load time"
+		send "&b~ &3Small The Crawling Depths improvements"
+		send ""
+		wait 2 seconds
+		send "&c- &4Fixed Crates GUI"
+		send "&c- &4Fixed blinking bossbar"
+		send "&c- &4Fixed Adventure Pass"
+		send "&c- &4CombatLog and Chat have been custom coded which resulted in removal of 3 unnecessary plugins."
+		send ""
+		wait 5 seconds
+		send ""
+		send ""
+		send ""
+		send "                      &a+ &c&l THE CRAWLING DEPTHS"
+		send ""
+		send "&8Once a thriving settlement, this cavern became a tomb when monstrous spiders erupted from below, slaughtering its inhabitants. Now, web-choked tunnels hide deadly traps, riddles and lurking horrors. Unravel its secrets-or be claimed by the swarm."
+		send ""
+		wait 5 seconds
+		send "&7&lImmersive as never before"
+		send ""
+		send "&8The entrances to the Crawling Depths Dungeon appear only in the Wilderness during natural world generation. Adventurers will need to explore the world to discover them! But don't worry—your friends can still join you! Simply have them enter the portal with you, and you can face the dungeon together!"
+		send ""
+		wait 5 seconds
+		send "&7&lFully Instanced & Procedurally Generated"
+		send ""
+		send "&8Each dungeon is fully instanced and dynamically generated, meaning it's unique to each player, just like in a modpack. Thanks to procedural generation, no two dungeons are alike—rooms, traps, monsters, and chest placements all change with every run!"
+		send ""
+		wait 5 seconds
+		send "&7&lTraps & Riddles"
+		send ""
+		send "&8Say goodbye to dungeons full of mindless monsters! Wilderness Dungeons brings exciting new challenges, including traps to outsmart and riddles that will test your wits!"
+		
