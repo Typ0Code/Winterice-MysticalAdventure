@@ -311,12 +311,7 @@ function PlayJoinJingle(player: player):
 				send " " to {_player}
 				send " " to {_player}
 				wait 1 tick
-			send "&a&lUnlimited Adventures Update Available!" to {_player}
-			send " " to {_player}
-			send "&fInstalled version: &a%FormattedVersion({setup::version})%" to {_player}
-			send "&fLatest update: &e&l%FormattedVersion({setup::version::update_new_version})%" to {_player}
-			send " " to {_player}
-			send component mini message from "<click:open_url:https://builtbybit.com/resources/unlimited-adventures-survival-setup.27917/updates><bold><blue>Click to check the new update!" to {_player}
+			send "&a&lGithub dev server not synchronized!" to {_player}
 			if {setup::version::last_seen_update_notification::%uuid of {_player}%} is {setup::version::update_new_version}:
 				add 1 to {setup::version::update_notifications::%uuid of {_player}%}
 			else:

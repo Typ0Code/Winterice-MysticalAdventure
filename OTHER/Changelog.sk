@@ -50,3 +50,30 @@ command /changelog:
 		send ""
 		send "&8Say goodbye to dungeons full of mindless monsters! Wilderness Dungeons brings exciting new challenges, including traps to outsmart and riddles that will test your wits!"
 		
+		
+command /whatnext:
+	trigger:
+		send ""
+		send "                      &8&lWhat's Next?                      "
+		send ""
+		wait 1 second
+		send ""
+		send ""
+		send "&7                 &0Featured in the next update.                      "
+		send ""
+		send "&a⟶ &7More Rooms and riddles in the Wilderness dungeons"
+		send "&a⟶ &7More different Wilderness dungeons"
+		send ""
+		send "&a⟶ &7Schematics and Artefacts"
+		send "        &6⟹ Uncover ancient blueprints while exploring, unlocking the abiliy to create unique, powerful items"
+		send "        &6⟹ Discover mysterious artifacts hidden in chests throughout the Wilderness. Uncover their secrets at the artifact's workshop"
+		send ""
+		send "&a⟶ &7Marry System/church"
+		send "&a⟶ &7Library"
+		send ""
+		wait 10 seconds
+		send ""
+		send "&c⟵ &4BUG fixed: Puzzle note despawns if full inventory"
+		send "&c⟵ &4BUG fixed: wodden sword"
+		send "&c⟵ &4BUG fixed: You can't break red or white carpets in the "world" world/wilderness"
+		send "&c⟵ &4BUG fixed: If you rightclick a bed in the wilderness dungeon and you try to leave it or die, you just respawn there. "

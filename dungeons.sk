@@ -2078,8 +2078,6 @@ on click on black concrete:
 		if {dungeons::portals::%{_floor_nr}%::loc::*} contains location of event-block:
 			if {dungeons::portals::%{_floor_nr}%::require_key} is true:
 				set {_dungeon_nr} to FindDungeon({_floor_nr})
-
-
 				if {dungeons::config::dungeon_%{_dungeon_nr}%::1::floor} is {_floor_nr}:
 					set {_first_floor} to true
 					if IsDungeonUnlocked(player, {_floor_nr}) is true:
